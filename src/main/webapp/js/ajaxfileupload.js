@@ -1,8 +1,7 @@
 
 jQuery.extend({
 
-    createUploadIframe: function(id, uri)
-	{
+    createUploadIframe: function(id, uri) {
 			//create frame
             var frameId = 'jUploadFrame' + id;
             
@@ -28,8 +27,8 @@ jQuery.extend({
 
             return io			
     },
-    createUploadForm: function(id, fileElementId)
-	{
+
+    createUploadForm: function(id, fileElementId) {
 		//create form	
 		var formId = 'jUploadForm' + id;
 		var fileId = 'jUploadFile' + id;
@@ -49,7 +48,17 @@ jQuery.extend({
 
     ajaxFileUpload: function(s) {
         // TODO introduce global settings, allowing the client to modify them for all requests, not only timeout		
-        s = jQuery.extend({}, jQuery.ajaxSettings, s);
+        s = jQuery.extend({handleError: function( s, xhr, status, e ){
+                // If a local callback was specified, fire it
+                if ( s.error ) {
+                    s.error.call( s.context || s, xhr, status, e );
+                }
+
+                // Fire the global callback
+                if ( s.global ) {
+                    (s.context ? jQuery(s.context) : jQuery.event).trigger( "ajaxError", [xhr, s, e] );
+                }
+            }}, jQuery.ajaxSettings, s);
         var id = s.fileElementId;        
 		var form = jQuery.createUploadForm(id, s.fileElementId);
 		var io = jQuery.createUploadIframe(id, s.secureuri);
@@ -195,6 +204,33 @@ jQuery.extend({
             jQuery("<div>").html(data).evalScripts();
 			//alert($('param', data).each(function(){alert($(this).attr('value'));}));
         return data;
+    },
+
+    handleError: function (s, xhr, status, e) {
+        if (s.error) {
+            s.error.call(s.context || s, xhr, status, e);
+        }
+        if (s.global) {
+            (s.context ? jQuery(s.context) : jQuery.event).trigger("ajaxError", [xhr, s, e]);
+        }
+    },
+
+    httpData: function (xhr, type, s) {
+        var ct = xhr.getResponseHeader("content-type"),
+            xml = type == "xml" || !type && ct && ct.indexOf("xml") >= 0,
+            data = xml ? xhr.responseXML : xhr.responseText;
+        if (xml && data.documentElement.tagName == "parsererror")
+            throw "parsererror";
+        if (s && s.dataFilter)
+            data = s.dataFilter(data, type);
+        if (typeof data === "string") {
+            if (type == "script")
+                jQuery.globalEval(data);
+            if (type == "json")
+                data = window["eval"]("(" + data + ")");
+        }
+        return data;
     }
+
 })
 

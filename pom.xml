@@ -130,6 +130,13 @@
             <version>${jsp-api.version}</version>
         </dependency>
         <!-- Jackson Json处理工具包 -->
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20220320</version>
+        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -153,7 +160,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-<!--                这里如果报错就添加verision-->
+                <!--                这里如果报错就添加verision-->
                 <version>3.1</version>
                 <configuration>
                     <source>1.8</source>
