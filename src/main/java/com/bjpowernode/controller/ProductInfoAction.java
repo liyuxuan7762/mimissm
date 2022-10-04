@@ -1,6 +1,7 @@
 package com.bjpowernode.controller;
 
 import com.bjpowernode.pojo.ProductInfo;
+import com.bjpowernode.pojo.vo.ProductInfoVo;
 import com.bjpowernode.service.ProductInfoService;
 import com.bjpowernode.utils.FileNameUtil;
 import com.github.pagehelper.PageInfo;
@@ -39,7 +40,16 @@ public class ProductInfoAction {
     // 显示第一页的商品信息
     @RequestMapping("/split.action")
     public String split(HttpServletRequest request) {
-        PageInfo info = productInfoService.spiltPage(1, PAGE_SIZE);
+        // 从session中读取出查询的条件
+        Object vo = request.getSession().getAttribute("prodVo");
+        PageInfo info = null;
+        if(vo != null) {
+            // 在有条件的
+            info = productInfoService.searchProductSplit((ProductInfoVo) vo, PAGE_SIZE);
+            request.getSession().removeAttribute("prodVo");
+        } else {
+            info = productInfoService.spiltPage(1, PAGE_SIZE);
+        }
         request.setAttribute("info", info);
         return "product";
     }
@@ -97,11 +107,13 @@ public class ProductInfoAction {
 
     // 实现商品修改的回显操作
     @RequestMapping("/one.action")
-    public String one(int pid, Model model) {
+    public String one(int pid, ProductInfoVo vo, Model model, HttpSession session) {
         // 根据主键查询到商品的信息
         ProductInfo product = productInfoService.getProductById(pid);
         // 将商品信息通过model回传到前端页面
         model.addAttribute("prod", product);
+        // 将查询条件保存到session里面 来保证更新完成后依然停留在更新前的页面
+        session.setAttribute("prodVo", vo);
         return "update";
     }
 
@@ -156,7 +168,7 @@ public class ProductInfoAction {
         String[] split = pids.split(",");
         try {
             int result = productInfoService.deleteBatch(split);
-            if(result>0){
+            if (result > 0) {
                 request.setAttribute("msg", "删除成功");
             } else {
                 request.setAttribute("msg", "删除失败");
@@ -164,8 +176,23 @@ public class ProductInfoAction {
         } catch (Exception e) {
             request.setAttribute("msg", "无法删除");
         }
-
         return "forward:/prod/deleteAjaxSplit.action";
-
     }
+
+    // 实现条件查询
+    @ResponseBody
+    @RequestMapping("/search.action")
+    public void search(ProductInfoVo vo, HttpSession session) {
+        List<ProductInfo> list = productInfoService.searchProduct(vo);
+        session.setAttribute("list", list);
+    }
+
+    // 实现分页条件查询
+    @ResponseBody
+    @RequestMapping("/searchSpilt.action")
+    public void searchSpilt(ProductInfoVo vo, HttpSession session) {
+        PageInfo<ProductInfo> pageInfo = productInfoService.searchProductSplit(vo, PAGE_SIZE);
+        session.setAttribute("info", pageInfo);
+    }
+
 }

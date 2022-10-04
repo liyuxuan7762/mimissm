@@ -265,4 +265,28 @@
         delete from product_info where p_id in
         <foreach collection="array" item="pid" separator="," open="(" close=")">#{pid}</foreach>
     </delete>
+
+    <!--    实现查询-->
+    <select id="searchProduct" parameterType="com.bjpowernode.pojo.vo.ProductInfoVo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from product_info
+        <where>
+            <if test="pName != null and pName != ''">
+                and p_name like '%${pName}%'
+            </if>
+            <if test="typeId != null and typeId != -1">
+                and type_id = #{typeId}
+            </if>
+            <if test="(lowPrice != null and lowPrice != '') and (highPrice == null or highPrice == '')">
+                and p_price &lt;= #{lowPrice}
+            </if>
+            <if test="(highPrice != null and highPrice != '') and (lowPrice == null or lowPrice == '')">
+                and p_price &gt;= #{highPrice}
+            </if>
+            <if test="(highPrice != null and highPrice != '') and (lowPrice != null or lowPrice != '')">
+                and p_price between #{lowPrice} and #{highPrice}
+            </if>
+        </where>
+    </select>
 </mapper>

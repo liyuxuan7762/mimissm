@@ -3,6 +3,7 @@ package com.bjpowernode.service.impl;
 import com.bjpowernode.mapper.ProductInfoMapper;
 import com.bjpowernode.pojo.ProductInfo;
 import com.bjpowernode.pojo.ProductInfoExample;
+import com.bjpowernode.pojo.vo.ProductInfoVo;
 import com.bjpowernode.service.ProductInfoService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class ProductInfoServiceImpl implements ProductInfoService {
 
@@ -63,5 +65,18 @@ public class ProductInfoServiceImpl implements ProductInfoService {
     @Override
     public int deleteBatch(String[] pids) {
         return productInfoMapper.deleteBatch(pids);
+    }
+
+    @Override
+    public List<ProductInfo> searchProduct(ProductInfoVo vo) {
+        return productInfoMapper.searchProduct(vo);
+    }
+
+    @Override
+    public PageInfo<ProductInfo> searchProductSplit(ProductInfoVo vo, int pageSize) {
+        // 设置分页插件
+        PageHelper.startPage(vo.getPageNo(), pageSize);
+        List<ProductInfo> list = productInfoMapper.searchProduct(vo);
+        return new PageInfo<>(list);
     }
 }

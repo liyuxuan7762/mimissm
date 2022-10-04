@@ -3,6 +3,9 @@
 <configuration>
     <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
 <!--    注册分页插件-->
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
     <plugins>
         <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
     </plugins>

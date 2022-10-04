@@ -2,6 +2,7 @@ package com.bjpowernode.mapper;
 
 import com.bjpowernode.pojo.ProductInfo;
 import com.bjpowernode.pojo.ProductInfoExample;
+import com.bjpowernode.pojo.vo.ProductInfoVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -31,4 +32,7 @@ public interface ProductInfoMapper {
 
     // 实现批量删除
     int deleteBatch(String[] pids);
+
+    // 实现查询
+    List<ProductInfo> searchProduct(ProductInfoVo vo);
 }

@@ -52,16 +52,16 @@
         <p>商品管理>商品列表</p>
     </div>
     <div id="condition" style="text-align: center">
-        <form id="myform">
-            商品名称：<input name="pname" id="pname">&nbsp;&nbsp;&nbsp;
-            商品类型：<select name="typeid" id="typeid">
+        <form id="myform" action="${pageContext.request.contextPath}/prod/login.action" method="post">
+            商品名称：<input name="pName" id="pName">&nbsp;&nbsp;&nbsp;
+            商品类型：<select name="typeId" id="typeId">
             <option value="-1">请选择</option>
-            <c:forEach items="${ptlist}" var="pt">
+            <c:forEach items="${typeList}" var="pt">
                 <option value="${pt.typeId}">${pt.typeName}</option>
             </c:forEach>
         </select>&nbsp;&nbsp;&nbsp;
-            价格：<input name="lprice" id="lprice">-<input name="hprice" id="hprice">
-            <input type="button" value="查询" onclick="ajaxsplit(${info.pageNum})">
+            价格：<input name="lowPrice" id="lowPrice">-<input name="highPrice" id="highPrice">
+            <input type="button" value="查询" onclick="search()">
         </form>
     </div>
     <br>
@@ -106,7 +106,7 @@
                                     <%--&nbsp;&nbsp;&nbsp;<a href="${pageContext.request.contextPath}/admin/product?flag=one&pid=${p.pId}">修改</a></td>--%>
                                 <td>
                                     <button type="button" class="btn btn-info "
-                                            onclick="one(${p.pId})">编辑
+                                            onclick="one(${p.pId}, ${info.pageNum})">编辑
                                     </button>
                                     <button type="button" class="btn btn-warning" id="mydel"
                                             onclick="del(${p.pId})">删除
@@ -230,16 +230,34 @@
         }
     }
 
-    function one(pid) {
-        location.href = "${pageContext.request.contextPath}/prod/one.action?pid=" + pid;
+    function one(pid, pageNo) {
+        // 获取到查询的条件
+        var pName = $("#pName").val();
+        var typeId = $("#typeId").val();
+        var lowPrice = $("#lowPrice").val();
+        var highPrice = $("#highPrice").val();
+
+        var str = "&pName=" + pName + "&typeId=" + typeId + "&lowPrice=" + lowPrice + "&highPrice=" + highPrice + "&pageNo=" + pageNo;
+        location.href = "${pageContext.request.contextPath}/prod/one.action?pid=" + pid + str;
     }
 </script>
 <!--分页的AJAX实现-->
 <script type="text/javascript">
     function ajaxsplit(page) {
+        var pName = $("#pName").val();
+        var typeId = $("#typeId").val();
+        var lowPrice = $("#lowPrice").val();
+        var highPrice = $("#highPrice").val();
+
         $.ajax({
-            url: "${pageContext.request.contextPath}/prod/ajaxSplit.action",
-            data: {"page": page},
+            url: "${pageContext.request.contextPath}/prod/searchSpilt.action",
+            data: {
+                "pageNo": page,
+                "pName": pName,
+                "typeId": typeId,
+                "lowPrice": lowPrice,
+                "highPrice": highPrice
+            },
             type: "post",
             success: function () {
                 // 重新刷新显示商品列表的容器
@@ -247,6 +265,31 @@
             }
         });
     }
+
+    function search() {
+        // 获取查询条件
+        var pName = $("#pName").val();
+        var typeId = $("#typeId").val();
+        var lowPrice = $("#lowPrice").val();
+        var highPrice = $("#highPrice").val();
+
+        // 发送ajax请求
+        $.ajax({
+            url: "${pageContext.request.contextPath}/prod/searchSpilt.action",
+            data: {
+                "pName": pName,
+                "typeId": typeId,
+                "lowPrice": lowPrice,
+                "highPrice": highPrice
+            },
+            type: "post",
+            success: function () {
+                $("#table").load("http://localhost:8080/admin/product.jsp #table");
+            }
+        });
+
+    }
+
 
 </script>
 
