@@ -106,7 +106,7 @@
                                     <%--&nbsp;&nbsp;&nbsp;<a href="${pageContext.request.contextPath}/admin/product?flag=one&pid=${p.pId}">修改</a></td>--%>
                                 <td>
                                     <button type="button" class="btn btn-info "
-                                            onclick="one(${p.pId},${info.pageNum})">编辑
+                                            onclick="one(${p.pId})">编辑
                                     </button>
                                     <button type="button" class="btn btn-warning" id="mydel"
                                             onclick="del(${p.pId})">删除
@@ -194,14 +194,20 @@
                 $.each(zhi, function (index, item) {
 
                     id = $(item).val(); //22 33
-                    alert(id);
                     if (id != null)
                         str += id + ",";  //22,33,44
                 });
-                alert(str + "11111111");
-                //发送请求到服务器端
-                // window.location="${pageContext.request.contextPath}/prod/deletebatch.action?str="+str;
-
+                // 发送ajax请求
+                $.ajax({
+                    url: "${pageContext.request.contextPath}/prod/deleteBatch.action",
+                    data: {"pids": str},
+                    type: "post",
+                    success: function (msg) {
+                        alert(msg);
+                        // 重新刷新表格对象
+                        $("#table").load("http://localhost:8080/admin/product.jsp #table");
+                    }
+                });
             }
         }
     }
@@ -210,12 +216,22 @@
     function del(pid) {
         if (confirm("确定删除吗")) {
             //向服务器提交请求完成删除
-            window.location = "${pageContext.request.contextPath}/prod/delete.action?pid=" + pid;
+            $.ajax({
+                url: "${pageContext.request.contextPath}/prod/delete.action",
+                data: {"pid": pid},
+                type: "post",
+                dataType: "text",
+                success: function (msg) {
+                    alert(msg);
+                    // 重新刷新表格对象
+                    $("#table").load("http://localhost:8080/admin/product.jsp #table");
+                }
+            });
         }
     }
 
-    function one(pid, ispage) {
-        location.href = "${pageContext.request.contextPath}/prod/one.action?pid=" + pid + "&page=" + ispage;
+    function one(pid) {
+        location.href = "${pageContext.request.contextPath}/prod/one.action?pid=" + pid;
     }
 </script>
 <!--分页的AJAX实现-->

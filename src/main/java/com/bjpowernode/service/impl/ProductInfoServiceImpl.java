@@ -14,7 +14,7 @@ import java.util.List;
 public class ProductInfoServiceImpl implements ProductInfoService {
 
     @Autowired
-    private ProductInfoMapper productInfoMapper = null;
+    ProductInfoMapper productInfoMapper = null;
 
     @Override
     // 显示所有商品信息不分页
@@ -38,5 +38,30 @@ public class ProductInfoServiceImpl implements ProductInfoService {
         PageInfo<ProductInfo> pageInfo = new PageInfo<>(list);
 
         return pageInfo;
+    }
+
+    @Override
+    public int save(ProductInfo productInfo) {
+        return productInfoMapper.insert(productInfo);
+    }
+
+    @Override
+    public ProductInfo getProductById(int pid) {
+        return productInfoMapper.selectByPrimaryKey(pid);
+    }
+
+    @Override
+    public int updateProduct(ProductInfo info) {
+        return productInfoMapper.updateByPrimaryKey(info);
+    }
+
+    @Override
+    public int deleteById(int pid) {
+        return productInfoMapper.deleteByPrimaryKey(pid);
+    }
+
+    @Override
+    public int deleteBatch(String[] pids) {
+        return productInfoMapper.deleteBatch(pids);
     }
 }

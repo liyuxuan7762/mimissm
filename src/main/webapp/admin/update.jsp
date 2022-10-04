@@ -33,7 +33,7 @@
 							//创建img 标签对象
 							var imgObj = $("<img>");
 							//给img标签对象追加属性
-							imgObj.attr("src","/image_big/"+obj.imgurl);
+							imgObj.attr("src","${pageContext.request.contextPath}/image_big/"+obj.imgurl);
 							imgObj.attr("width","100px");
 							imgObj.attr("height","100px");
 							//将图片img标签追加到imgDiv末尾
@@ -116,7 +116,7 @@
 							<td class="one">类别</td>
 							<td>
 								<select name="typeId">
-									<c:forEach items="${ptlist}" var="type">
+									<c:forEach items="${typeList}" var="type">
 										<option value="${type.typeId}"
 												<c:if test="${type.typeId==prod.typeId}">
 													selected="selected"

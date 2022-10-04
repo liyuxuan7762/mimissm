@@ -7,8 +7,23 @@ import java.util.List;
 
 public interface ProductInfoService {
     // 显示所有商品信息不分页
-    public List<ProductInfo> getProductInfoList();
+    List<ProductInfo> getProductInfoList();
 
     // 显示所有商品信息分页
-    public PageInfo spiltPage(int pageNum, int pageSize);
+    PageInfo spiltPage(int pageNum, int pageSize);
+
+    // 保存商品信息
+    int save(ProductInfo productInfo);
+
+    // 根据主键查询商品信息
+    ProductInfo getProductById(int pid);
+
+    // 更新商品信息
+    int updateProduct(ProductInfo info);
+
+    // 删除单个商品信息
+    int deleteById(int pid);
+
+    // 批量删除商品
+    int deleteBatch(String[] pids);
 }
